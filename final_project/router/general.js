@@ -10,6 +10,19 @@ public_users.post("/register", (req,res) => {
   return res.status(300).json({message: "Yet to be implemented"});
 });
 
+
+//  Get the book list available in the shop
+public_users.get('/',async function (req, res) {
+  try {
+    
+    const bookList = await getBooks(); 
+    res.send(JSON.stringify(bookList));
+   
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving book list" });
+  }
+});
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   //Write your code here
