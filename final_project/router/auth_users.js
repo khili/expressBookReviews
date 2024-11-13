@@ -19,7 +19,7 @@ const authenticatedUser = (username,password)=>{
 }
 
 //only registered users can login
-regd_users.post("/login", (req,res) => {
+/*regd_users.post("/login", (req,res) => {
   const username = req.body.username;
   const password = req.body.password;
 
@@ -31,6 +31,35 @@ regd_users.post("/login", (req,res) => {
   else {
     return res.status(208).json({message: "Invalid username or password"});
   }
+});
+*/
+regd_users.post("/login", (req,res) => {
+  const {username, password} = req.body;
+  
+  // check if username and password are provided
+  if (!username || !password) {
+    return res.status(400).json({message: "Please provide both username and password."});
+  }
+
+  // check if user is registered
+  const user = users.find(u => u.username === username);
+  if (!user) {
+    return res.status(401).json({message: "Invalid credentials."});
+  }
+
+  // check if password is correct
+  if (user.password !== password) {
+    return res.status(401).json({message: "Invalid credentials."});
+  }
+
+  // generate JWT token
+  const accessToken = jwt.sign({ username: user.username }, 'your_secret_key');
+
+  // save token in session
+  req.session.accessToken = accessToken;
+
+  // return success message with access token
+  return res.json({message: "Login successful.", accessToken});
 });
 
 // Add a book review
